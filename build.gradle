@@ -13,8 +13,8 @@ repositories {
 	maven {
 		url = uri("https://maven.pkg.github.com/vendapues/venda-pues-components")
 		credentials {
-			username = 'federico29'
-			password = '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'
+			username = System.getenv("USERNAME")
+			password = System.getenv("TOKEN")
 		}
 	}
 }
