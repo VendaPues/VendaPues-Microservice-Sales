@@ -2,8 +2,11 @@ package org.venda.pues.sales.service;
 
 import dto.SaleDto;
 import error.exception.NotFoundException;
+import error.exception.UnavailableProductsException;
+import models.ProductDocument;
 import models.SaleDocument;
 import org.springframework.stereotype.Service;
+import org.venda.pues.sales.repository.ProductRepository;
 import org.venda.pues.sales.repository.SaleRepository;
 
 import java.util.List;
@@ -12,14 +15,19 @@ import java.util.List;
 public class SaleServices {
 
     private final SaleRepository saleRepository;
+    private final ProductRepository productRepository;
 
-    public SaleServices(SaleRepository saleRepository) {
+    public SaleServices(SaleRepository saleRepository, ProductRepository productRepository) {
         this.saleRepository = saleRepository;
+        this.productRepository = productRepository;
     }
 
     public SaleDocument create(SaleDto saleDto) {
         SaleDocument sale = new SaleDocument(saleDto);
-        return saleRepository.save(sale);
+        if (areAvailable(sale.getProducts())) {
+            return saleRepository.save(sale);
+        }
+        throw new UnavailableProductsException("Some products are out of stock.");
     }
 
     public List<SaleDocument> all() {
@@ -50,5 +58,15 @@ public class SaleServices {
             return true;
         }
         throw new NotFoundException("Sale not found");
+    }
+
+    private boolean areAvailable(List<String> productsIds) {
+        List<ProductDocument> products = (List<ProductDocument>) productRepository.findAllById(productsIds);
+        for (ProductDocument product: products) {
+            if(product.getStock() == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }
