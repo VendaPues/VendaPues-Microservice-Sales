@@ -11,16 +11,16 @@ sourceCompatibility = '1.8'
 repositories {
 	mavenCentral()
 	maven {
-		url = uri("https://maven.pkg.github.com/vendapues/venda-pues-components")
+		url = uri("https://maven.pkg.github.com/vendapues/components")
 		credentials {
-			username = System.getenv("USERNAME")
-			password = System.getenv("TOKEN")
+			username = project.findProperty("gpr.user") as String ?: System.getenv("GIT_USER")
+			password = project.findProperty("gpr.key") as String ?: System.getenv("TOKEN")
 		}
 	}
 }
 
 dependencies {
-	implementation 'org.vendapues:components:0.0.3-beta'
+	implementation 'org.vendapues:components:1.0.1-release'
 	implementation 'org.springframework.boot:spring-boot-starter-web:2.5.4'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:2.5.4'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.4'

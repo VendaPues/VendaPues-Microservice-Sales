@@ -1,14 +1,12 @@
 package org.venda.pues.sales.controller;
 
-import models.ProductDocument;
 import models.SaleDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.venda.pues.sales.service.SaleServices;
-
-import java.util.List;
+import dto.SaleDto;
 
 @RestController
 @RequestMapping("/v1/sale")

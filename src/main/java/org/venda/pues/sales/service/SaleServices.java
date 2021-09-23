@@ -1,8 +1,9 @@
 package org.venda.pues.sales.service;
 
+import dto.SaleDto;
+import error.exception.NotFoundException;
 import models.SaleDocument;
 import org.springframework.stereotype.Service;
-import org.venda.pues.sales.controller.SaleDto;
 import org.venda.pues.sales.repository.SaleRepository;
 
 import java.util.List;
@@ -17,9 +18,8 @@ public class SaleServices {
     }
 
     public SaleDocument create(SaleDto saleDto) {
-        SaleDocument sale = new SaleDocument();
-
-        return saleRepository.save(parse(sale, saleDto));
+        SaleDocument sale = new SaleDocument(saleDto);
+        return saleRepository.save(sale);
     }
 
     public List<SaleDocument> all() {
@@ -27,15 +27,20 @@ public class SaleServices {
     }
 
     public SaleDocument findById(String id) {
-        return saleRepository.findById(id).orElse(null);
+        SaleDocument sale = saleRepository.findById(id).orElse(null);
+        if (sale != null) {
+            return sale;
+        }
+        throw new NotFoundException("Sale not found");
     }
 
     public SaleDocument update(String id, SaleDto saleDto) {
         SaleDocument sale = saleRepository.findById(id).orElse(null);
         if (sale != null) {
-            return saleRepository.save(parse(sale, saleDto));
+            sale.update(saleDto);
+            return saleRepository.save(sale);
         }
-        return null;
+        throw new NotFoundException("Sale not found");
     }
 
     public boolean delete(String id) {
@@ -44,14 +49,6 @@ public class SaleServices {
             saleRepository.deleteById(id);
             return true;
         }
-        return false;
-    }
-
-    private SaleDocument parse(SaleDocument document, SaleDto dto) {
-        document.setAmount(dto.getAmount());
-        document.setProducts(dto.getProducts());
-        document.setSoldAt(dto.getSoldAt());
-
-        return document;
+        throw new NotFoundException("Sale not found");
     }
 }
