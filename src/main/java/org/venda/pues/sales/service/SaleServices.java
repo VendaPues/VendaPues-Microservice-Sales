@@ -10,6 +10,7 @@ import org.venda.pues.sales.repository.ProductRepository;
 import org.venda.pues.sales.repository.SaleRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class SaleServices {
@@ -24,7 +25,7 @@ public class SaleServices {
 
     public SaleDocument create(SaleDto saleDto) {
         SaleDocument sale = new SaleDocument(saleDto);
-        if (areAvailable(sale.getProducts())) {
+        if (areAvailable(sale.getProducts().keySet())) {
             return saleRepository.save(sale);
         }
         throw new UnavailableProductsException("Some products are out of stock.");
@@ -60,7 +61,7 @@ public class SaleServices {
         throw new NotFoundException("Sale not found");
     }
 
-    private boolean areAvailable(List<String> productsIds) {
+    private boolean areAvailable(Set<String> productsIds) {
         List<ProductDocument> products = (List<ProductDocument>) productRepository.findAllById(productsIds);
         for (ProductDocument product: products) {
             if(product.getStock() == 0) {

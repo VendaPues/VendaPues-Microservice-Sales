@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.vendapues:components:1.0.2-release'
+	implementation 'org.vendapues:components:1.0.14-release'
 	implementation 'org.springframework.boot:spring-boot-starter-web:2.5.4'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:2.5.4'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.4'
