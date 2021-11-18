@@ -10,6 +10,7 @@ import dto.SaleDto;
 
 @RestController
 @RequestMapping("/v1/sale")
+@CrossOrigin(origins = "*", allowedHeaders = "*", methods= {RequestMethod.GET,RequestMethod.POST})
 public class SaleController {
 
     private final SaleServices saleServices;
