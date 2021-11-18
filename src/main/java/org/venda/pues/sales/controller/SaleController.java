@@ -14,14 +14,8 @@ public class SaleController {
 
     private final SaleServices saleServices;
 
-
     public SaleController(@Autowired SaleServices saleServices) {
         this.saleServices = saleServices;
-    }
-
-    @GetMapping
-    public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(saleServices.all());
     }
 
     @GetMapping("/{id}")
@@ -33,22 +27,8 @@ public class SaleController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping
-    public ResponseEntity<?> create(@RequestBody SaleDto saleDto) {
-        return ResponseEntity.ok(saleServices.create(saleDto));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody SaleDto saleDto, @PathVariable String id) {
-        SaleDocument result = saleServices.update(id, saleDto);
-        if (result != null) {
-            return ResponseEntity.ok(result);
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> delete(@PathVariable String id) {
-        return ResponseEntity.ok(saleServices.delete(id));
+    @PostMapping("/{userId}")
+    public ResponseEntity<?> create(@PathVariable String userId, @RequestBody SaleDto saleDto) {
+        return ResponseEntity.ok(saleServices.create(userId, saleDto));
     }
 }
