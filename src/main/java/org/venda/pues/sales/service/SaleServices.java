@@ -10,6 +10,7 @@ import org.venda.pues.sales.repository.ProductRepository;
 import org.venda.pues.sales.repository.SaleRepository;
 import org.venda.pues.sales.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -26,31 +27,37 @@ public class SaleServices {
         this.userRepository = userRepository;
     }
 
-    public SaleDocument create(String userId, SaleDto saleDto) {
+    public SaleDocument create(String userId, List<SaleDto> saleDto) {
         UserDocument user = userRepository.findById(userId).orElse(null);
         if (user != null) {
             SaleDocument sale = new SaleDocument(saleDto);
             sale = saleRepository.save(sale);
             user.addNewSale(sale.getId());
             updateUser(user);
+            userRepository.save(user);
 
             return sale;
         }
         throw new NotFoundException("User not found");
     }
 
-    public SaleDocument findById(String id) {
-        SaleDocument sale = saleRepository.findById(id).orElse(null);
-        if (sale != null) {
-            return sale;
+    public List<SaleDocument> all(String userId) {
+        UserDocument user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            List<SaleDocument> sales = new ArrayList<>();
+            for (String saleId: user.getSales()) {
+                sales.add(saleRepository.findById(saleId).orElse(null));
+            }
+
+            return sales;
         }
-        throw new NotFoundException("Sale not found");
+        throw new NotFoundException("User not found");
     }
 
     private boolean areAvailable(Set<String> productsIds) {
         List<ProductDocument> products = (List<ProductDocument>) productRepository.findAllById(productsIds);
-        for (ProductDocument product: products) {
-            if(product.getStock() == 0) {
+        for (ProductDocument product : products) {
+            if (product.getStock() == 0) {
                 return false;
             }
         }
