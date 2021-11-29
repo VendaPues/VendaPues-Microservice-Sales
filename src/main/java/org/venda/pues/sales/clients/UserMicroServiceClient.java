@@ -16,7 +16,7 @@ public class UserMicroServiceClient {
 
     public int sellProducts(SaleDto saleData, String bearerToken) throws UnirestException {
         HttpResponse<String> response = Unirest
-                .put("http://localhost:8081/v1/product/decrease-stock")
+                .put("https://venda-pues-products-api-2.herokuapp.com/v1/product/decrease-stock")
                 .header("Authorization", bearerToken)
                 .header("Content-Type", "application/json")
                 .body(saleDataToJsonString(saleData))
