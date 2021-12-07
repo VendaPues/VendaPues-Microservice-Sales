@@ -9,13 +9,17 @@ import models.UserDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.venda.pues.sales.clients.UserMicroServiceClient;
+import org.venda.pues.sales.models.DatesRequestModel;
 import org.venda.pues.sales.repository.ProductRepository;
 import org.venda.pues.sales.repository.SaleRepository;
 import org.venda.pues.sales.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class SaleServices {
@@ -72,5 +76,26 @@ public class SaleServices {
 
     private void updateUser(UserDocument user) {
         userRepository.save(user);
+    }
+
+    public List<SaleDocument> findByTimeRange(String userId, DatesRequestModel requestData) {
+        UserDocument user = userRepository.findById(userId).orElse(null);
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.ENGLISH);
+        if (user != null) {
+            List<SaleDocument> sales = new ArrayList<>();
+            for (String saleId : user.getSales()) {
+                try {
+                    SaleDocument currentSale = saleRepository.findByIdEqualsAndSoldAtBetween(saleId, format.parse(requestData.getStartDate()), format.parse(requestData.getEndDate()));
+                    if (currentSale != null) {
+                        sales.add(currentSale);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return sales;
+        }
+        throw new NotFoundException("User not found");
     }
 }

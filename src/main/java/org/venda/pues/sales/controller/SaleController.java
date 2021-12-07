@@ -5,6 +5,7 @@ import dto.SaleDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.venda.pues.sales.models.DatesRequestModel;
 import org.venda.pues.sales.service.SaleServices;
 
 @RestController
@@ -26,5 +27,10 @@ public class SaleController {
     @PostMapping("/{userId}")
     public ResponseEntity<?> create(@PathVariable String userId, @RequestBody SaleDto saleDto, @RequestHeader("authorization") String authorizationHeader) throws UnirestException {
         return ResponseEntity.ok(saleServices.create(userId, saleDto, authorizationHeader));
+    }
+
+    @PostMapping("/filter/{userId}")
+    public ResponseEntity<?> findByTimeRange(@PathVariable String userId, @RequestBody DatesRequestModel requestData) {
+        return ResponseEntity.ok(saleServices.findByTimeRange(userId, requestData));
     }
 }
